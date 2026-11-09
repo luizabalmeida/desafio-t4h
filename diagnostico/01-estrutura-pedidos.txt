@@ -1,0 +1,15 @@
+                           Table "public.pedidos"
+   Column    |            Type             | Collation | Nullable | Default 
+-------------+-----------------------------+-----------+----------+---------
+ id          | integer                     |           | not null | 
+ cliente_id  | integer                     |           | not null | 
+ status      | text                        |           | not null | 
+ criado_em   | timestamp without time zone |           | not null | 
+ observacoes | text                        |           | not null | 
+Indexes:
+    "pedidos_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "pedidos_cliente_id_fkey" FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+Referenced by:
+    TABLE "itens_pedido" CONSTRAINT "itens_pedido_pedido_id_fkey" FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+

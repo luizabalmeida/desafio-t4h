@@ -1,0 +1,14 @@
+                    Table "public.itens_pedido"
+         Column          |  Type   | Collation | Nullable | Default 
+-------------------------+---------+-----------+----------+---------
+ id                      | integer |           | not null | 
+ pedido_id               | integer |           | not null | 
+ produto_id              | integer |           | not null | 
+ quantidade              | integer |           | not null | 
+ preco_unitario_centavos | integer |           | not null | 
+Indexes:
+    "itens_pedido_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "itens_pedido_pedido_id_fkey" FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+    "itens_pedido_produto_id_fkey" FOREIGN KEY (produto_id) REFERENCES produtos(id)
+
