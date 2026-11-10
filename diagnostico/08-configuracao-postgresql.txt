@@ -1,0 +1,9 @@
+              name               | setting | unit |       source       
+---------------------------------+---------+------+--------------------
+ effective_cache_size            | 524288  | 8kB  | default
+ max_connections                 | 100     |      | configuration file
+ max_parallel_workers_per_gather | 2       |      | default
+ shared_buffers                  | 16384   | 8kB  | configuration file
+ work_mem                        | 4096    | kB   | default
+(5 rows)
+
