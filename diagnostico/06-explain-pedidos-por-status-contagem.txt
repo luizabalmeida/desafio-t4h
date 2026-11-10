@@ -1,0 +1,20 @@
+                                                                QUERY PLAN                                                                 
+-------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=24751.04..24751.05 rows=1 width=8) (actual time=75.516..76.861 rows=1 loops=1)
+   Buffers: shared hit=6853 read=13981
+   ->  Gather  (cost=24750.82..24751.03 rows=2 width=8) (actual time=75.466..76.857 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=6853 read=13981
+         ->  Partial Aggregate  (cost=23750.82..23750.83 rows=1 width=8) (actual time=74.089..74.090 rows=1 loops=3)
+               Buffers: shared hit=6853 read=13981
+               ->  Parallel Seq Scan on pedidos  (cost=0.00..23438.17 rows=125062 width=0) (actual time=0.153..64.213 rows=100000 loops=3)
+                     Filter: (status = 'pago'::text)
+                     Rows Removed by Filter: 66667
+                     Buffers: shared hit=6853 read=13981
+ Planning:
+   Buffers: shared hit=66
+ Planning Time: 0.857 ms
+ Execution Time: 76.944 ms
+(16 rows)
+
