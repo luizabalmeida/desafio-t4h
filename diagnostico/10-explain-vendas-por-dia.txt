@@ -1,0 +1,24 @@
+                                                                       QUERY PLAN                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+ Gather  (cost=26533.22..44654.16 rows=6753 width=299) (actual time=123.648..312.030 rows=12945 loops=1)
+   Workers Planned: 2
+   Workers Launched: 2
+   Buffers: shared hit=15832 read=14749
+   ->  Parallel Hash Join  (cost=25533.22..42978.86 rows=2814 width=299) (actual time=122.234..266.711 rows=4315 loops=3)
+         Hash Cond: (i.pedido_id = p.id)
+         Buffers: shared hit=15832 read=14749
+         ->  Parallel Seq Scan on itens_pedido i  (cost=0.00..15805.00 rows=625000 width=12) (actual time=0.015..72.658 rows=500000 loops=3)
+               Buffers: shared hit=8589 read=966
+         ->  Parallel Hash  (cost=25521.50..25521.50 rows=938 width=291) (actual time=121.950..121.951 rows=1438 loops=3)
+               Buckets: 8192 (originally 4096)  Batches: 1 (originally 1)  Memory Usage: 1536kB
+               Buffers: shared hit=7051 read=13783
+               ->  Parallel Seq Scan on pedidos p  (cost=0.00..25521.50 rows=938 width=291) (actual time=0.612..119.905 rows=1438 loops=3)
+                     Filter: ((status <> 'cancelado'::text) AND ((criado_em)::date >= '2024-01-01'::date) AND ((criado_em)::date <= '2024-01-07'::date))
+                     Rows Removed by Filter: 165229
+                     Buffers: shared hit=7051 read=13783
+ Planning:
+   Buffers: shared hit=220
+ Planning Time: 0.713 ms
+ Execution Time: 312.407 ms
+(20 rows)
+
