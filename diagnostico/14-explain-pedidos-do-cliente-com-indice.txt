@@ -1,0 +1,15 @@
+                                                               QUERY PLAN                                                                
+-----------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=24.57..24.58 rows=5 width=300) (actual time=0.076..0.076 rows=5 loops=1)
+   Sort Key: criado_em DESC, id DESC
+   Sort Method: quicksort  Memory: 26kB
+   Buffers: shared hit=13 read=1
+   ->  Index Scan using idx_pedidos_cliente_id on pedidos  (cost=0.42..24.51 rows=5 width=300) (actual time=0.043..0.057 rows=5 loops=1)
+         Index Cond: (cliente_id = 42)
+         Buffers: shared hit=7 read=1
+ Planning:
+   Buffers: shared hit=97
+ Planning Time: 0.161 ms
+ Execution Time: 0.093 ms
+(11 rows)
+

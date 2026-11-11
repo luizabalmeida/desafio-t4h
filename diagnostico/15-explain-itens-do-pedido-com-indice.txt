@@ -1,0 +1,15 @@
+                                                                   QUERY PLAN                                                                   
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=8.54..8.55 rows=4 width=20) (actual time=0.056..0.056 rows=1 loops=1)
+   Sort Key: id
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=5 read=2
+   ->  Index Scan using idx_itens_pedido_pedido_id on itens_pedido  (cost=0.43..8.50 rows=4 width=20) (actual time=0.042..0.043 rows=1 loops=1)
+         Index Cond: (pedido_id = 1000)
+         Buffers: shared hit=2 read=2
+ Planning:
+   Buffers: shared hit=85
+ Planning Time: 0.157 ms
+ Execution Time: 0.073 ms
+(11 rows)
+
