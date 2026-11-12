@@ -1,0 +1,42 @@
+== entregue ==
+                                                                             QUERY PLAN                                                                              
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=6281.95..6294.54 rows=20 width=299) (actual time=12.700..12.726 rows=20 loops=1)
+   Buffers: shared hit=10125
+   ->  Index Scan Backward using idx_pedidos_status_criado_id on pedidos  (cost=0.42..79589.51 rows=126450 width=299) (actual time=0.049..12.486 rows=10000 loops=1)
+         Index Cond: (status = 'entregue'::text)
+         Buffers: shared hit=10125
+ Planning:
+   Buffers: shared hit=168
+ Planning Time: 0.279 ms
+ Execution Time: 12.740 ms
+(9 rows)
+
+== cancelado ==
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=15588.07..15619.31 rows=20 width=299) (actual time=15.923..15.949 rows=20 loops=1)
+   Buffers: shared hit=9917 read=208
+   ->  Index Scan Backward using idx_pedidos_status_criado_id on pedidos  (cost=0.42..76194.04 rows=48783 width=299) (actual time=0.036..15.739 rows=10000 loops=1)
+         Index Cond: (status = 'cancelado'::text)
+         Buffers: shared hit=9917 read=208
+ Planning:
+   Buffers: shared hit=168
+ Planning Time: 0.247 ms
+ Execution Time: 15.960 ms
+(9 rows)
+
+== pendente ==
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=22555.17..22600.37 rows=20 width=299) (actual time=35.756..35.902 rows=20 loops=1)
+   Buffers: shared hit=7634 read=2489
+   ->  Index Scan Backward using idx_pedidos_status_criado_id on pedidos  (cost=0.42..56877.72 rows=25167 width=299) (actual time=0.049..35.690 rows=10000 loops=1)
+         Index Cond: (status = 'pendente'::text)
+         Buffers: shared hit=7634 read=2489
+ Planning:
+   Buffers: shared hit=168
+ Planning Time: 0.186 ms
+ Execution Time: 35.913 ms
+(9 rows)
+
