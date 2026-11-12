@@ -1,0 +1,24 @@
+                                                                  QUERY PLAN                                                                  
+----------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=34489.78..34492.11 rows=20 width=300) (actual time=1077.996..1085.995 rows=20 loops=1)
+   Buffers: shared hit=10100 read=10860, temp read=1468 written=11507
+   ->  Gather Merge  (cost=33325.36..62354.76 rows=248806 width=300) (actual time=1074.915..1085.610 rows=10000 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=10100 read=10860, temp read=1468 written=11507
+         ->  Sort  (cost=32325.34..32636.35 rows=124403 width=300) (actual time=578.533..579.221 rows=3447 loops=3)
+               Sort Key: criado_em DESC, id DESC
+               Sort Method: external merge  Disk: 30920kB
+               Buffers: shared hit=10100 read=10860, temp read=1468 written=11507
+               Worker 0:  Sort Method: external merge  Disk: 31008kB
+               Worker 1:  Sort Method: external merge  Disk: 29872kB
+               ->  Parallel Seq Scan on pedidos  (cost=0.00..23438.17 rows=124403 width=300) (actual time=0.053..195.016 rows=100000 loops=3)
+                     Filter: (status = 'pago'::text)
+                     Rows Removed by Filter: 66667
+                     Buffers: shared hit=9974 read=10860
+ Planning:
+   Buffers: shared hit=105
+ Planning Time: 0.456 ms
+ Execution Time: 1088.361 ms
+(20 rows)
+
