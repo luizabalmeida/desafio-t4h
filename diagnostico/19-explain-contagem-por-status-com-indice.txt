@@ -1,0 +1,20 @@
+                                                                                     QUERY PLAN                                                                                     
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=11235.11..11235.12 rows=1 width=8) (actual time=20.438..21.670 rows=1 loops=1)
+   Buffers: shared hit=1484
+   ->  Gather  (cost=11234.90..11235.11 rows=2 width=8) (actual time=20.400..21.667 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=1484
+         ->  Partial Aggregate  (cost=10234.90..10234.91 rows=1 width=8) (actual time=19.094..19.095 rows=1 loops=3)
+               Buffers: shared hit=1484
+               ->  Parallel Index Only Scan using idx_pedidos_status_criado_id on pedidos  (cost=0.42..9924.20 rows=124278 width=0) (actual time=0.034..15.557 rows=100000 loops=3)
+                     Index Cond: (status = 'pago'::text)
+                     Heap Fetches: 0
+                     Buffers: shared hit=1484
+ Planning:
+   Buffers: shared hit=111
+ Planning Time: 0.218 ms
+ Execution Time: 21.722 ms
+(16 rows)
+

@@ -1,0 +1,13 @@
+                                                                             QUERY PLAN                                                                              
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=2937.83..2943.72 rows=20 width=300) (actual time=15.937..15.955 rows=20 loops=1)
+   Buffers: shared hit=10033 read=70
+   ->  Index Scan Backward using idx_pedidos_status_criado_id on pedidos  (cost=0.42..87789.14 rows=298267 width=300) (actual time=0.058..15.729 rows=10000 loops=1)
+         Index Cond: (status = 'pago'::text)
+         Buffers: shared hit=10033 read=70
+ Planning:
+   Buffers: shared hit=139
+ Planning Time: 0.495 ms
+ Execution Time: 15.984 ms
+(9 rows)
+
