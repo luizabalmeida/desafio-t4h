@@ -11,6 +11,8 @@ Como ler este arquivo
 
 - 02-indice-status-ordem: criar um índice em pedidos (status, criado_em, id) deve reduzir o p95 da rota pedidos-por-status e aumentar as requisições por segundo, porque para as páginas que a carga pede (1 a 1000, OFFSET de até 19.980) o banco poderá percorrer o índice já na ordem do ORDER BY e parar depois de offset mais 20 entradas, em vez de ler e ordenar em disco todos os pedidos do status (cerca de 300 mil no caso de pago). Estaria errada se o plano continuasse com varredura da tabela e ordenação, ou se o tempo da rota não mudasse. Risco: o count(*) da rota continua percorrendo as linhas do status, e o planejador pode ignorar o índice. Fontes: diagnostico/06, 07 e 16; pesquisa, fontes 1, 8 e 9.
 
+- 03-indice-data: criar um índice sobre a expressão criado_em::date em pedidos deve reduzir o p95 da rota vendas-por-dia e aumentar as requisições por segundo, porque o filtro da rota usa exatamente essa expressão e mantém só cerca de 1% dos pedidos (7 dias de uns 725 que a carga sorteia), então o banco poderá achar os pedidos do período pelo índice e ligá-los aos itens pelo índice da mudança 01, em vez de ler as duas tabelas inteiras. Estaria errada se o plano continuasse com varredura das tabelas, ou se o tempo da rota não mudasse. Risco: o planejador pode ignorar o índice, e ele custa nas escritas. Fontes: diagnostico/10; pesquisa, fontes 1 (seção 11.7) e 8 (Date Types).
+
 ## Tabela de resultados
 | Mudança | Fonte da ideia | Status | Antes (pasta) | Depois (pasta) | Resultado (medianas) | Conclusão |
 |---|---|---|---|---|---|---|
