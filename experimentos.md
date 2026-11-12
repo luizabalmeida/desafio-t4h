@@ -13,6 +13,8 @@ Como ler este arquivo
 
 - 03-indice-data: criar um índice sobre a expressão criado_em::date em pedidos deve reduzir o p95 da rota vendas-por-dia e aumentar as requisições por segundo, porque o filtro da rota usa exatamente essa expressão e mantém só cerca de 1% dos pedidos (7 dias de uns 725 que a carga sorteia), então o banco poderá achar os pedidos do período pelo índice e ligá-los aos itens pelo índice da mudança 01, em vez de ler as duas tabelas inteiras. Estaria errada se o plano continuasse com varredura das tabelas, ou se o tempo da rota não mudasse. Risco: o planejador pode ignorar o índice, e ele custa nas escritas. Fontes: diagnostico/10; pesquisa, fontes 1 (seção 11.7) e 8 (Date Types).
 
+- 04-pool-conexoes: trocar o Client criado a cada consulta por um Pool do node-postgres (pool.query) no db.js deve reduzir o p95 da rota pedidos-do-cliente e aumentar as requisições por segundo, porque a rota faz cerca de 17 consultas por chamada (cliente 42) e cada uma hoje abre e fecha uma conexão com o banco. Estaria errada se o tempo da rota e as requisições por segundo não mudassem. Riscos: o pool limita quantas consultas rodam ao mesmo tempo, o que pode enfileirá-las, e o custo real da abertura de conexão neste ambiente é desconhecido (a fonte 6 cita 20 a 30 ms num caso genérico). Fontes: diagnostico/12 e 13; pesquisa, fontes 6 e 7.
+
 ## Tabela de resultados
 | Mudança | Fonte da ideia | Status | Antes (pasta) | Depois (pasta) | Resultado (medianas) | Conclusão |
 |---|---|---|---|---|---|---|
