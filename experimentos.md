@@ -9,6 +9,8 @@ Como ler este arquivo
 ## Hipóteses (escritas antes de medir)
 - 01-indices-fk: criar índices em pedidos(cliente_id) e itens_pedido(pedido_id) deve reduzir o p95 da rota pedidos-do-cliente e aumentar as requisições por segundo, porque o banco passa a achar os pedidos e os itens de um cliente sem ler as tabelas inteiras. Estaria errada se o tempo da rota sob carga não mudasse. Fontes: diagnostico/03 e 05; pesquisa, fontes 1 e 8.
 
+- 02-indice-status-ordem: criar um índice em pedidos (status, criado_em, id) deve reduzir o p95 da rota pedidos-por-status e aumentar as requisições por segundo, porque para as páginas que a carga pede (1 a 1000, OFFSET de até 19.980) o banco poderá percorrer o índice já na ordem do ORDER BY e parar depois de offset mais 20 entradas, em vez de ler e ordenar em disco todos os pedidos do status (cerca de 300 mil no caso de pago). Estaria errada se o plano continuasse com varredura da tabela e ordenação, ou se o tempo da rota não mudasse. Risco: o count(*) da rota continua percorrendo as linhas do status, e o planejador pode ignorar o índice. Fontes: diagnostico/06, 07 e 16; pesquisa, fontes 1, 8 e 9.
+
 ## Tabela de resultados
 | Mudança | Fonte da ideia | Status | Antes (pasta) | Depois (pasta) | Resultado (medianas) | Conclusão |
 |---|---|---|---|---|---|---|
