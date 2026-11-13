@@ -71,14 +71,37 @@ rotas.get('/clientes/:id/pedidos', assincrono(async (req, res) => {
     [id],
   );
 
+  // Mudança 05: uma consulta para todos os itens e uma para todos os produtos,
+  // em vez de uma consulta por pedido e uma por item.
+  const itensPorPedido = new Map();
+  const produtos = new Map();
+
+  if (pedidos.length > 0) {
+    const itens = await consultar(
+      'SELECT * FROM itens_pedido WHERE pedido_id = ANY($1::int[]) ORDER BY id',
+      [pedidos.map((pedido) => pedido.id)],
+    );
+    for (const item of itens) {
+      if (!itensPorPedido.has(item.pedido_id)) itensPorPedido.set(item.pedido_id, []);
+      itensPorPedido.get(item.pedido_id).push(item);
+    }
+
+    const idsProdutos = [...new Set(itens.map((item) => item.produto_id))];
+    if (idsProdutos.length > 0) {
+      const linhasProdutos = await consultar(
+        'SELECT * FROM produtos WHERE id = ANY($1::int[])',
+        [idsProdutos],
+      );
+      for (const produto of linhasProdutos) produtos.set(produto.id, produto);
+    }
+  }
+
   const resposta = [];
   for (const pedido of pedidos) {
-    const itens = await consultar('SELECT * FROM itens_pedido WHERE pedido_id = $1 ORDER BY id', [pedido.id]);
-
     const itensFormatados = [];
     let total = 0;
-    for (const item of itens) {
-      const [produto] = await consultar('SELECT * FROM produtos WHERE id = $1', [item.produto_id]);
+    for (const item of itensPorPedido.get(pedido.id) || []) {
+      const produto = produtos.get(item.produto_id);
       itensFormatados.push({
         produto_id: item.produto_id,
         produto_nome: produto.nome,
