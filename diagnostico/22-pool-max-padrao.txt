@@ -1,0 +1,1 @@
+max padrão do Pool: 10
