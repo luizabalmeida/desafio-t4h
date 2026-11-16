@@ -1,3 +1,74 @@
+# Resultados do desafio (Tech for Humans, Pesquisa e Inovação 2026)
+
+## O problema
+
+Uma API de loja fictícia (Node.js com Express e PostgreSQL 16, em dois containers) ficava lenta sob carga e usava perto de 99% da CPU do banco. A pergunta do desafio: como deixá-la mais rápida e mais barata de rodar, sem mudar o que ela faz? Cada mudança abaixo foi feita sozinha, com antes e depois medidos pelo `scripts/medir.sh`, e manteve o contrato (as 42 respostas do verificador continuam iguais).
+
+## Resumo dos resultados
+
+Medianas de três execuções (20 usuários virtuais, 60 s), da linha de base até a mudança 05:
+
+| Métrica | Linha de base | Mudança 05 |
+|---|---|---|
+| Requisições por segundo | 3,19 | 18,94 |
+| p95 geral | 19.815,7 ms | 3.638,4 ms |
+| Mediana geral | 1.102,7 ms | 514,8 ms |
+| Rota `pedidos-do-cliente`, mediana | 16.295,9 ms | 900,5 ms |
+| CPU média do banco | 99,0% | 99,7% |
+| CPU média da API | 5,1% | 13,5% |
+
+O banco continua perto de 100% de CPU, e alguns pontos ficaram sem explicação (veja a seção 7 do artigo).
+
+| Mudança | O que mudou | Requisições por segundo |
+|---|---|---|
+| 01-indices-fk | Índices em `pedidos(cliente_id)` e `itens_pedido(pedido_id)` | 3,19 → 6,73 |
+| 02-indice-status-ordem | Índice em `pedidos (status, criado_em, id)` | 6,73 → 8,84 |
+| 03-indice-data | Índice sobre `criado_em::date` | 8,84 → 11,08 |
+| 04-pool-conexoes | Pool de conexões em `api/src/db.js` | 11,08 → 18,01 |
+| 05-consultas-em-lote | Consultas em lote na rota `/clientes/:id/pedidos` | 18,01 → 18,94 |
+
+Os números de cada mudança (p95, CPU, memória, pastas de resultados e conclusão) estão em [experimentos.md](experimentos.md).
+
+## Commits medidos
+
+O commit de cada medição está registrado em `resultados/<pasta>/contexto.txt`.
+
+| Rótulo da medição | Commit medido | Pastas |
+|---|---|---|
+| 00-linha-de-base | `96ccded` | `resultados/*-00-linha-de-base/` |
+| 01-indices-fk | `45f1c96` | `resultados/*-01-indices-fk/` |
+| 02-indice-status | `b723925` | `resultados/*-02-indice-status/` |
+| 03-indice-data | `f29863c` | `resultados/*-03-indice-data/` |
+| 04-pool-conexoes | `6647d1d` | `resultados/*-04-pool-conexoes/` |
+| 05-consultas-em-lote | `1bd757d` | `resultados/*-05-consultas-em-lote/` |
+
+## Onde está cada coisa
+
+- `artigo/artigo.md`: o artigo.
+- `experimentos.md`: uma linha por mudança aplicada, com fonte, antes, depois, pastas de resultados e conclusão.
+- `proximos-testes.md`: ideias pesquisadas e não testadas, com a ficha de cada uma.
+- `resultados/`: as saídas do `scripts/medir.sh`, sem edição manual.
+- `diagnostico/`: as evidências do diagnóstico (planos de execução, contadores do banco, configuração).
+- `pesquisa/anotacoes-pesquisa.md`: as fontes lidas, os fatos de cada uma e as alternativas.
+- `banco/03-indices-fk.sql`, `banco/04-indice-pedidos-status.sql` e `banco/05-indice-pedidos-data.sql`: as mudanças no banco.
+- `api/src/db.js` e `api/src/rotas.js`: as mudanças no código da API.
+
+## Como repetir
+
+As instruções completas (instalar, subir, gravar o contrato e medir) continuam abaixo, neste mesmo README, nas seções "Passo a passo do zero", "Como medir" e "Medir o antes de novo". Em resumo, para medir uma versão específica:
+
+1. Veja o commit medido na tabela acima (ou em `resultados/<pasta>/contexto.txt`).
+2. `git switch --detach <commit>`
+3. `docker compose down -v && docker compose up -d --build`
+4. `scripts/medir.sh <rótulo>`, três vezes, com os parâmetros padrão e na mesma máquina.
+5. `git switch main` para voltar.
+
+As mudanças 01 a 03 são arquivos `.sql` em `banco/` e só valem com o banco recriado (`down -v`), porque esses arquivos só rodam na criação. As mudanças 04 e 05 mexem no código da API e pedem `--build`. O código da API em `main` é o da mudança 05.
+
+---
+
+# README original do desafio
+
 # Vaga Estágio Pesquisa e Inovação 2026 - Desafios Técnicos
 
 Aplicação do desafio técnico da vaga de estágio em Pesquisa e Inovação da Tech for Humans. O enunciado, com a missão, as entregas e os critérios de avaliação, é enviado na largada. Este README cobre só como instalar, rodar e medir a aplicação, e é a referência de todos os comandos.
